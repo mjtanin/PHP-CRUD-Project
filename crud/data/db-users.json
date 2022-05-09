@@ -1,0 +1,23 @@
+[
+    {
+        "name": "Tanin Ahmed",
+        "username": "mjtanin",
+        "email": "mjtanintaj@gmail.com",
+        "password": "93a5fe438f7fd50c51c71c65f209699566860bad",
+        "userRoal": "admin"
+    },
+    {
+        "name": "Tanvir",
+        "username": "tanvir",
+        "email": "tanvir@gmail.com",
+        "password": "6d6949480c940dc122915bed8f0878cabd1af191",
+        "userRoal": "subscriber"
+    },
+    {
+        "name": "Jui",
+        "username": "jui",
+        "email": "Jui@gmail.com",
+        "password": "e37bc8ec7a29e459179ee56d29cb9aee1ac94d82",
+        "userRoal": "editor"
+    }
+]

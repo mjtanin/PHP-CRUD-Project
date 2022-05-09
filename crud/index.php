@@ -8,6 +8,14 @@ $lname = '';
 $roll = '';
 $id = '';
 
+
+if ('logout' == $task) {
+    $_SESSION['logedin'] = false;
+    $_SESSION['user'] = 'Gust';
+    $_SESSION['userRoal'] = null;
+    header('location: \\crud\\index.php');
+}
+
 if (isset($_POST['submit'])) {
     $fname = filter_input(INPUT_POST, 'fname', FILTER_SANITIZE_STRING);
     $lname = filter_input(INPUT_POST, 'lname', FILTER_SANITIZE_STRING);
@@ -36,7 +44,12 @@ if (isset($_POST['submit'])) {
     }
 }
 if ('delete' == $task) {
-    deleteStudent($_GET['id']);
+    if (isAdmin()) {
+        deleteStudent($_GET['id']);
+    } else {
+        header('location: \\crud\\index.php');
+        return false;
+    }
 }
 
 ?>
@@ -85,7 +98,12 @@ if ('delete' == $task) {
                 <?php if ('report' === $task) {
                     generateReport();
                 } ?>
-                <?php if ('add' === $task) : ?>
+                <?php if ('add' === $task) :
+
+                    if (!isAdmin() && !isEditor()) {
+                        header('location: \\crud\\index.php');
+                    } ?>
+
                     <form action="/crud/index.php?task=add" method="POST">
                         <label for="fname">Fast Name</label>
                         <input type="text" placeholder="Enter student fast name" id="fname" value="<?php echo $fname; ?>" name="fname">
@@ -96,7 +114,13 @@ if ('delete' == $task) {
                         <button type="submit" class="button" name="submit">Submit</button>
                     </form>
                 <?php endif; ?>
+
+
                 <?php if ('edit' === $task) :
+
+                    if (!isAdmin() && !isEditor()) {
+                        header('location: \\crud\\index.php');
+                    }
 
                     $json_data = file_get_contents(DB_NAME);
                     $allstudents = json_decode($json_data, true);
@@ -119,6 +143,42 @@ if ('delete' == $task) {
                 endif; ?>
             </div>
         </div>
+        <?php if ('login' == $task) : ?>
+            <div class="row">
+                <div class="column column-60 column-offset-20">
+                    <h2>Login your account</h2>
+                    <form action="./auth.php" method="POST">
+                        <label for="username">User Name 🦸 </label>
+                        <input type="text" name="username" id="username">
+                        <label for="password">Password</label>
+                        <input type="password" name="password" id="password">
+                        <input type="hidden" name="login">
+                        <button type="submit" class="button" name="submit">Login</button>
+                    </form>
+                </div>
+            </div>
+        <?php endif; ?>
+        <?php if ('signup' == $task) : ?>
+            <div class="row">
+                <div class="column column-60 column-offset-20">
+                    <h2>Create new account</h2>
+                    <form action="./auth.php" method="POST">
+                        <label for="name">Name</label>
+                        <input type="text" name="name" id="name">
+                        <label for="username">User Name 🦸 </label>
+                        <input type="text" name="username" id="username">
+                        <label for="email">Emain 📧 </label>
+                        <input type="email" name="email" id="email">
+                        <label for="password">Password</label>
+                        <input type="password" name="password" id="password">
+                        <label for="password">Confirm Password</label>
+                        <input type="password" name="password2" id="password2">
+                        <input type="hidden" name="signup">
+                        <button type="submit" class="button" name="submit">Sign Up</button>
+                    </form>
+                </div>
+            </div>
+        <?php endif; ?>
     </div>
 </body>
 

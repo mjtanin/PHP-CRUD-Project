@@ -1,5 +1,8 @@
 <?php
 define('DB_NAME', getcwd() . "\\data\\db.json");
+
+session_name('login_session');
+session_start();
 $error = false;
 $message = '';
 
@@ -47,7 +50,9 @@ function generateReport()
                 <tr>
                     <th>Name</th>
                     <th>Roll</th>
-                    <th>Action</th>
+                    <?php if (isAdmin() || isEditor()) : ?>
+                        <th>Action</th>
+                    <?php endif; ?>
                 </tr>
             </thead>
             <tbody>
@@ -56,7 +61,11 @@ function generateReport()
                     <tr>
                         <td><?php printf('%s %s', $student['fname'], $student['lname']); ?></td>
                         <td><?php printf('%s', $student['roll']) ?></td>
-                        <td style="width: 25%;"><?php printf('<a href="/crud/index.php?task=edit&id=%1$s">Edit</a> | <a href="/crud/index.php?task=delete&id=%1$s">Delete</a>', $student['id']); ?></td>
+                        <?php if (isAdmin()) : ?>
+                            <td style="width: 25%;"><?php printf('<a href="/crud/index.php?task=edit&id=%1$s">Edit</a> | <a href="/crud/index.php?task=delete&id=%1$s">Delete</a>', $student['id']); ?></td>
+                        <?php elseif (isEditor()) : ?>
+                            <td style="width: 25%;"><?php printf('<a href="/crud/index.php?task=edit&id=%s">Edit</a>', $student['id']); ?></td>
+                        <?php endif; ?>
                     </tr>
                 <?php } ?>
             </tbody>
@@ -135,4 +144,17 @@ function editStudent($id, $fname, $lname, $roll)
     $json_data = json_encode($updateStudentList);
     file_put_contents(DB_NAME, $json_data);
     return true;
+}
+
+function isAdmin()
+{
+    return ('admin' == $_SESSION['userRoal']);
+}
+function isEditor()
+{
+    return ('editor' == $_SESSION['userRoal']);
+}
+function isSubscriber()
+{
+    return ('subscriber' == $_SESSION['userRoal']);
 }
